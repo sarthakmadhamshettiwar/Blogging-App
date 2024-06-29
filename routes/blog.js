@@ -30,6 +30,7 @@ router.get("/:id", async(req, res)=>{
     const blog = await Blog.findById(req.params.id).populate("createdBy");
     res.render('blog', {user:req.user, blog:blog, comments});
 });
+
 router.post("/comment/:blogId", async (req, res)=>{
     //console.log(req.body.content)
     await Comment.create({
@@ -39,7 +40,8 @@ router.post("/comment/:blogId", async (req, res)=>{
     });
 
     return res.redirect(`/blog/${req.params.blogId}`);
-})
+});
+
 router.post("/", upload.single('coverImage'), async (req, res) => {
     // console.log(req.body);   //print details of the body
     // console.log(req.file);   //print details of the file uploaded including the path where it is saved and filename
@@ -52,5 +54,6 @@ router.post("/", upload.single('coverImage'), async (req, res) => {
     });
     return res.redirect(`/blog/${blog._id}`);
 });
+
 
 module.exports = router;

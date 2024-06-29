@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head')%>
+    <title>Update existing blog</title>
+  </head>
+  <body>
+    <%- include('./partials/scripts')%>
+    <%- include('./partials/nav')%>
+    <div class="container mt-4">
+        <form action="/personal/update/<%= blog._id %>" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label">Blog's Title</label>
+              <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="<%= blog.title %>">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Cover Image</label>
+              <input type="file" class="form-control" id="coverImage" name="coverImage" aria-describedby="coverImage">
+            </div>
+            <div class="mb-3">
+              <label for="body">Body</label>
+              <textarea name="body" class="form-control" id="body" placeholder="<%= blog.body %>"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+  </body>
+</html>

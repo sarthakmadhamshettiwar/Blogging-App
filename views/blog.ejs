@@ -11,14 +11,14 @@
         <div style="text-align: center;">
           <h1><%=blog.title%></h1>
             <br>
-            <img src="<%=blog.coverImageURL%>" alt="src" style="display: inline-block;">
+            <img src="<%=blog.coverImageURL%>" alt="src" style="display: inline-block;" width="700px">
         </div>
         <pre><%=blog.body%></pre>
     </div>
   
 
     <div class="container mt-3">
-      <img src="<%= blog.createdBy.profileImageURL%>" width="50px">
+      <img src="<%= blog.createdBy.profileImageURL%>" width="30px">
       <pre><%=blog.createdBy.fullName %></pre>
     </div>
     <div class="container mt-4">
@@ -36,7 +36,7 @@
       <!--Displaying all the comments to the user irrespective of signed in status-->
       <div class="container mt-3">
       <%comments.forEach(comment => {%>
-        <img src="<%= comment.createdBy.profileImageURL%>" width="50px">
+        <img src="<%= comment.createdBy.profileImageURL%>" width="30px">
         <%=comment.createdBy.fullName%>
         <pre><%=comment.content%></pre>
       <%});%>

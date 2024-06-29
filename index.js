@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const userRoute = require('./routes/user');
 const blogRoute = require('./routes/blog');
+const personalRoute = require('./routes/personal');
 
 const Blog = require('./models/blog');
 
@@ -30,6 +31,7 @@ app.use(express.static(path.resolve('./public')));
 
 app.use('/user', userRoute);
 app.use('/blog', blogRoute);
+app.use('/personal', personalRoute);
 
 app.get('/', async (req, res)=>{
     //Get all the blogs on the homepage
