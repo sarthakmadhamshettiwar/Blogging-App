@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.get('/signin', (req, res)=>{
     if(req.user){
-        return res.redirect('/', {user: req.user});
+        //console.log(req.user);
+        return res.redirect('/');   //redirect can't be used to pass req body
     }
     else{
         return res.render("signin");

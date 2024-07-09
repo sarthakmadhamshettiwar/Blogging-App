@@ -1,28 +1,54 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <%- include('./partials/head')%>
-    <title>Add new blog</title>
+    <%- include('./partials/head') %>
+    <title>Add New Blog</title>
+    <style>
+      textarea {
+        overflow: hidden;
+        resize: none;
+        border: none;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        font-size: 16px;
+      }
+    </style>
   </head>
   <body>
-    <%- include('./partials/scripts')%>
-    <%- include('./partials/nav')%>
+    <script>
+      function autoHeight(event) {
+        const elem = event.srcElement;
+        elem.style.height = "auto";
+        const padding = elem.style.padding;
+        const border = elem.style.border;
+        elem.style.padding = 0;
+        elem.style.border = "1px solid #ced4da";
+        elem.style.height = elem.scrollHeight + "px";
+        elem.style.padding = padding;
+        elem.style.border = border;
+      }
+    </script>
+    <%- include('./partials/scripts') %>
+    <%- include('./partials/nav') %>
     <div class="container mt-4">
-        <form action="/blog" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-              <label class="form-label">Blog's Title</label>
-              <input type="text" class="form-control" id="title" name="title" aria-describedby="title">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Cover Image</label>
-              <input type="file" class="form-control" id="coverImage" name="coverImage" aria-describedby="coverImage">
-            </div>
-            <div class="mb-3">
-              <label for="body">Body</label>
-              <textarea name="body" class="form-control" id="body"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+      <form action="/blog" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="title" class="form-label">Blog's Title</label>
+          <input type="text" class="form-control" id="title" name="title" aria-describedby="title" required>
+        </div>
+        <div class="mb-3">
+          <label for="coverImage" class="form-label">Cover Image</label>
+          <input type="file" class="form-control" id="coverImage" name="coverImage" aria-describedby="coverImage" required/>
+        </div>
+        <div class="mb-3">
+          <label for="body" class="form-label">Body</label>
+          <textarea class="form-control" name="body" id="body" rows="10" oninput="autoHeight(event);" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
     </div>
   </body>
 </html>
