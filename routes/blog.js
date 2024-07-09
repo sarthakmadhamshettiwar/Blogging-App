@@ -58,6 +58,7 @@ router.get("/:id", async (req, res) => {
                     try {
                         const blog = JSON.parse(blogData);
                         //console.log('Cache hit');
+                        console.log('Cache hit');
                         res.render('blog', { user: req.user, blog, comments });
                     } catch (parseErr) {
                         console.log('Error parsing cached blog data:', parseErr);
@@ -72,6 +73,7 @@ router.get("/:id", async (req, res) => {
                     }
                 });
                 //console.log('Cache miss');
+                console.log('Cache miss');
                 res.render('blog', { user: req.user, blog, comments });
             }
         }
@@ -125,4 +127,12 @@ router.get("/search/:id", async (req, res) => {
 });
 
 
+router.get("/search/:query", async (req, res)=>{
+    //const blogs = await Blog.find({$text:{$search:req.params.query}});
+    console.log(req.param.query);
+    const blogs = {'title':'Bello'};
+    console.log("hllo");
+    //res.render('searchedBlogs',{searchQuery: req.params.query, blogs:blogs, user:req.user});
+    res.send('Hello Worl');
+})
 module.exports = router;
