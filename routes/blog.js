@@ -1,12 +1,25 @@
 const express = require("express");
 const multer = require('multer'); // Corrected import
+const Redis = require('redis');
 const path = require('path'); // Added path module import
 const Blog = require('../models/blog');
 const Comment = require('../models/comment');   //Each blog will have comments associated with it
-
+const DEFAULT_EXPIRATION = 3600;
 const router = express.Router();
-router.use(express.static(path.resolve('./public')));
-// app.use(express.static(path.resolve('./public')));
+
+
+imagesPath = path.join(__dirname, '..', 'public');
+router.use(express.static(imagesPath));
+
+//Using Redis for caching
+// const client = Redis.createClient();
+
+const client = Redis.createClient({
+    legacyMode: true,
+    //PORT: 5001
+  })
+client.connect().catch(console.error)
+
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -23,13 +36,48 @@ const upload = multer({ storage: storage });
 router.get("/add-new", (req, res) => {
     return res.render('addBlog', { user: req.user });
 });
-router.get("/:id", async(req, res)=>{
-    //fetch comments as well while rendering the blog
-    const comments = await Comment.find({blogId: req.params.id}).populate("createdBy");
-    //console.log(comments);
-    const blog = await Blog.findById(req.params.id).populate("createdBy");
-    res.render('blog', {user:req.user, blog:blog, comments});
+
+
+router.get("/:id", async (req, res) => {
+    const blogKey = `blog:${req.params.id}`;
+    //const commentKey = `comment:${req.params.id}`;
+
+    const comments = await Comment.find({ blogId: req.params.id }).populate("createdBy");
+
+    client.exists(blogKey, async (err, reply) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Internal Server Error');
+        } else {
+            if (reply === 1) {
+                client.get(blogKey, (err, blogData) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).send('Internal Server Error');
+                    }
+                    try {
+                        const blog = JSON.parse(blogData);
+                        console.log('Cache hit');
+                        res.render('blog', { user: req.user, blog, comments });
+                    } catch (parseErr) {
+                        console.log('Error parsing cached blog data:', parseErr);
+                        return res.status(500).send('Internal Server Error');
+                    }
+                });
+            } else {
+                const blog = await Blog.findById(req.params.id).populate("createdBy");
+                client.setEx(blogKey, DEFAULT_EXPIRATION, JSON.stringify(blog), (err) => {
+                    if (err) {
+                        console.log('Error setting cache:', err);
+                    }
+                });
+                console.log('Cache miss');
+                res.render('blog', { user: req.user, blog, comments });
+            }
+        }
+    });
 });
+
 
 router.post("/comment/:blogId", async (req, res)=>{
     //console.log(req.body.content)
@@ -55,5 +103,12 @@ router.post("/", upload.single('coverImage'), async (req, res) => {
     return res.redirect(`/blog/${blog._id}`);
 });
 
-
+router.get("/search/:query", async (req, res)=>{
+    //const blogs = await Blog.find({$text:{$search:req.params.query}});
+    console.log(req.param.query);
+    const blogs = {'title':'Bello'};
+    console.log("hllo");
+    //res.render('searchedBlogs',{searchQuery: req.params.query, blogs:blogs, user:req.user});
+    res.send('Hello Worl');
+})
 module.exports = router;
